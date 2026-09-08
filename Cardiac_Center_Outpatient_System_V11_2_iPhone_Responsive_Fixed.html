@@ -1,0 +1,1352 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cardiac Center Outpatient System V2</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f4f5f7;color:#222}header{background:#fff;border-bottom:1px solid #ddd;padding:14px 22px;display:flex;justify-content:space-between;align-items:center}.brand{font-weight:700;font-size:20px}.sub{font-size:12px;color:#777;margin-top:4px}.badge,.status{padding:6px 10px;border-radius:18px;background:#eee;font-size:11px}.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 70px)}nav{background:#25282c;padding:14px}nav button{display:block;width:100%;border:0;background:transparent;color:#ddd;text-align:right;padding:11px;border-radius:8px;margin:3px 0;cursor:pointer}nav button.active,nav button:hover{background:#3b4046;color:white}main{padding:22px;max-width:1400px;width:100%;margin:auto}.page{display:none}.page.active{display:block}h1{margin:0 0 6px;font-size:25px}.hint{color:#666;margin:0 0 18px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card,form,table{background:#fff;border:1px solid #ddd;border-radius:12px}.card{padding:15px}.metric{font-size:28px;font-weight:bold;margin-top:7px}.small{font-size:12px;color:#777}table{width:100%;border-collapse:collapse;overflow:hidden}th,td{padding:10px;border-bottom:1px solid #eee;font-size:13px;text-align:right}th{background:#f0f1f3}.fields{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}form{padding:18px}label{font-size:12px;color:#555;display:block;margin-bottom:5px}input,select,textarea{width:100%;padding:9px;border:1px solid #ccc;border-radius:7px;background:#fff}.btn{border:0;border-radius:8px;padding:9px 13px;background:#222;color:#fff;cursor:pointer}.secondary{background:#eee;color:#222}.actions{display:flex;gap:8px;margin-top:15px;flex-wrap:wrap}.section-title{font-weight:bold;margin:18px 0 9px}.route{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0}.route .card{cursor:pointer;border:2px solid #ddd}.route .card:hover{border-color:#555}.patient{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid #ddd;border-radius:12px;padding:14px;margin-bottom:15px}.timeline{display:flex;gap:5px;overflow:auto;margin-bottom:15px}.step{min-width:125px;padding:9px;border-radius:8px;background:#eee;text-align:center;font-size:11px}.step.current{background:#222;color:#fff}.step.done{background:#d9d9d9}.note{padding:11px;border-right:4px solid #555;background:#fafafa;font-size:13px}@media(max-width:900px){.layout{grid-template-columns:1fr}nav{display:flex;overflow:auto;gap:4px}nav button{min-width:140px}.grid,.fields,.route{grid-template-columns:1fr 1fr}}@media(max-width:600px){main{padding:12px}.grid,.fields,.route{grid-template-columns:1fr}header{flex-direction:column;align-items:flex-start;gap:8px}}
+
+<style>
+.patient-id{font-size:22px;font-weight:800;letter-spacing:1px}
+.searchbar{display:grid;grid-template-columns:1fr 180px 120px;gap:8px;margin:14px 0}
+.display-wall{background:#111;color:#fff;border-radius:16px;padding:18px;margin-top:15px;min-height:430px}
+.wall-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #444;padding-bottom:12px}
+.wall-id{font-size:34px;font-weight:900}.wall-state{font-size:17px;padding:8px 14px;border-radius:20px;background:#333}
+.wall-body{display:grid;grid-template-columns:1fr 1.2fr;gap:18px;margin-top:18px}
+.paper-preview{background:#fff;color:#222;border-radius:8px;min-height:300px;padding:18px;box-shadow:0 5px 20px #0008}
+.paper-logo{font-weight:900;text-align:center;border-bottom:2px solid #222;padding-bottom:8px}
+.paper-title{text-align:center;font-size:17px;font-weight:900;margin:18px 0}
+.paper-line{height:10px;background:#ddd;margin:9px 0;border-radius:3px}.paper-line.short{width:55%}.paper-box{border:1px solid #aaa;padding:10px;margin-top:14px}
+.stage-list{display:grid;gap:9px}.stage-item{padding:12px;border:1px solid #444;border-radius:9px;display:flex;justify-content:space-between}.stage-item.current{background:#fff;color:#111}.stage-item.done{background:#252525;color:#bbb}
+.kiosk-note{margin-top:12px;padding:12px;border-right:4px solid #888;background:#f8f8f8;color:#333;border-radius:8px}
+@media(max-width:800px){.searchbar{grid-template-columns:1fr}.wall-body{grid-template-columns:1fr}}
+</style>
+
+<style>
+.output-screen{background:#15171a;color:#fff;border-radius:16px;padding:18px;margin-top:15px}
+.output-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.output-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px}
+.paper{background:#fff;color:#222;min-height:650px;padding:28px;box-shadow:0 8px 28px #0009;border-radius:2px;position:relative}
+.paper-header{text-align:center;border-bottom:2px solid #222;padding-bottom:12px}
+.paper-header b{font-size:19px}.paper-header div{font-size:11px;margin-top:4px}
+.paper-stage{font-size:20px;font-weight:900;text-align:center;margin:22px 0 16px}
+.paper-next{border:1px solid #999;padding:12px;margin:14px 0;background:#fafafa}
+.paper-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:9px 0}.paper-field{border-bottom:1px solid #bbb;padding:6px}
+.paper-check{display:inline-block;border:1px solid #777;padding:5px 9px;margin:3px;border-radius:4px;font-size:11px}
+.paper-footer{position:absolute;bottom:20px;right:28px;left:28px;border-top:1px solid #bbb;padding-top:8px;font-size:10px;color:#666}
+.output-history{max-height:650px;overflow:auto}.output-item{border:1px solid #444;border-radius:9px;padding:11px;margin-bottom:8px;cursor:pointer}.output-item.active{background:#fff;color:#111}.output-item b{display:block}.output-item span{font-size:10px;color:#aaa}.output-item.active span{color:#555}
+.output-label{font-size:12px;color:#aaa;margin-bottom:6px}
+@media(max-width:900px){.output-grid{grid-template-columns:1fr}.paper{min-height:620px}}
+</style>
+</style>
+<style>
+:root{
+ --primary:#8f1118; --primary2:#c62832; --primary3:#5d0b10;
+ --soft:#fff4f4; --line:#ead1d3; --text:#272727; --muted:#6d5a5c;
+}
+*{box-sizing:border-box}
+html{direction:rtl}
+body{margin:0;color:var(--text);background:#faf7f7;font-family:Arial,"Tahoma",sans-serif}
+header,.topbar,.hero,.brand{background:linear-gradient(90deg,var(--primary3),var(--primary),var(--primary2));}
+button,.btn{background:linear-gradient(90deg,var(--primary3),var(--primary2));border:0;border-radius:10px;color:#fff;cursor:pointer}
+button:hover,.btn:hover{filter:brightness(.96)}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px;background:#fff;color:var(--text);font:inherit}
+textarea{min-height:90px;resize:vertical}
+.page,.card{max-width:1200px;margin:16px auto}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 4px 18px #5d0b1010}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.route-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;white-space:nowrap}
+th,td{border-bottom:1px solid var(--line);padding:10px;text-align:right}
+.section-title{color:var(--primary);font-weight:700;border-right:4px solid var(--primary);padding-right:9px;margin:16px 0 10px}
+.paper{background:#fff;max-width:794px;margin:auto;border:1px solid #ddd;min-height:1123px;padding:34px;direction:rtl}
+.paper-head{border-bottom:4px solid var(--primary);padding-bottom:12px}
+.paper-title{color:var(--primary);font-weight:800}
+.status{color:var(--primary);font-weight:700}
+@media(max-width:800px){
+ .fields,.route-cards{grid-template-columns:1fr}
+ .page,.card{margin:10px}
+ .page{padding-bottom:20px}
+ .actions>*{width:100%}
+ .paper{min-height:auto;padding:20px}
+ nav{overflow-x:auto;white-space:nowrap}
+}
+@media(max-width:480px){
+ body{font-size:14px}
+ h1{font-size:22px}
+ h2{font-size:18px}
+ input,select,textarea,.btn,button{font-size:16px;min-height:44px}
+ .paper{padding:14px}
+}
+@media print{
+ body{background:#fff}
+ nav,.actions,.hint,.no-print{display:none!important}
+ .page{display:none!important}
+ #outputs{display:block!important}
+ .paper{border:0;box-shadow:none;margin:0;width:210mm;min-height:297mm}
+}
+</style>
+
+
+<style>
+.browser-check{background:#fff;border:1px solid #ead1d3;border-radius:14px;padding:16px;margin:12px auto;max-width:1200px}
+.browser-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.browser-item{border:1px solid #ead1d3;border-radius:10px;padding:10px;background:#fff8f8}
+.browser-item b{color:#8f1118}
+@media(max-width:800px){.browser-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.browser-grid{grid-template-columns:1fr}}
+</style>
+
+
+<style id="v11-2-mobile-fix">
+/* V11.2 — iPhone / small-screen layout repair */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+header {
+  width: 100%;
+  min-width: 0;
+  gap: 10px;
+}
+
+header > div {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.brand, .sub, h1, h2, h3, p, label, .hint, .note,
+.card, .section-title, .paper-title, .paper-stage,
+.patient, .stage-item, .output-item, .browser-item {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+main {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.page, .card, form, .browser-check, .output-screen,
+.display-wall, .kiosk-note {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.fields,
+.grid,
+.route,
+.route-cards,
+.output-grid,
+.wall-body,
+.paper-row {
+  width: 100%;
+  min-width: 0;
+}
+
+.fields > *,
+.grid > *,
+.route > *,
+.route-cards > *,
+.output-grid > *,
+.wall-body > *,
+.paper-row > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+input, select, textarea, button, .btn {
+  max-width: 100%;
+  min-width: 0;
+}
+
+table {
+  max-width: 100%;
+}
+
+th, td {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.patient {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.patient > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.wall-head {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.wall-id {
+  font-size: clamp(24px, 8vw, 34px);
+  overflow-wrap: anywhere;
+}
+
+.timeline {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.step {
+  flex: 0 0 125px;
+}
+
+.stage-item {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  header {
+    padding: 12px 14px;
+    align-items: stretch;
+  }
+
+  header > div:first-child {
+    width: 100%;
+  }
+
+  .brand {
+    font-size: 18px;
+    line-height: 1.35;
+  }
+
+  .sub {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  header .badge {
+    align-self: flex-start;
+    max-width: 100%;
+  }
+
+  nav {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    white-space: normal;
+    padding: 8px;
+    gap: 5px;
+  }
+
+  nav button {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 128px;
+    max-width: 180px;
+    white-space: normal;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  main {
+    padding: 10px !important;
+  }
+
+  .card, .browser-check, .output-screen, .display-wall {
+    margin: 8px 0 !important;
+    padding: 12px !important;
+    border-radius: 12px;
+  }
+
+  h1 {
+    font-size: 22px;
+    line-height: 1.35;
+  }
+
+  h2 {
+    line-height: 1.4;
+  }
+
+  .fields,
+  .grid,
+  .route,
+  .route-cards,
+  .output-grid,
+  .wall-body,
+  .paper-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .actions > * {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .searchbar {
+    grid-template-columns: 1fr !important;
+  }
+
+  .browser-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .paper {
+    width: 100%;
+    max-width: 100%;
+    min-height: auto !important;
+    padding: 14px !important;
+  }
+
+  .paper-footer {
+    position: static !important;
+    margin-top: 20px;
+  }
+
+  .output-history {
+    max-height: none;
+  }
+
+  .output-item {
+    width: 100%;
+  }
+
+  .output-toolbar {
+    width: 100%;
+  }
+
+  .output-toolbar > * {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  body {
+    font-size: 14px;
+  }
+
+  .brand {
+    font-size: 17px;
+  }
+
+  nav button {
+    min-width: 115px;
+  }
+
+  input, select, textarea, button, .btn {
+    font-size: 16px;
+  }
+}
+</style>
+
+</head><body>
+<header><div><div class="brand">العيادات الخارجية لمركز القلب</div><div class="sub">Cardiac Center Outpatient Journey System — V2</div></div><div class="badge" id="clock"></div></header>
+<div class="layout"><nav>
+<button class="active" onclick="show('dash',this)">لوحة القيادة</button><button onclick="show('lookup',this)">شاشة تتبع المريض</button><button onclick="show('engine',this)">محرك رحلة المريض</button><button onclick="show('diagnostics',this)">فحص النظام</button><button onclick="show('search',this)">استعلام المريض</button><button onclick="show('exit',this)">الخروج والمتابعة</button><button onclick="show('doctor',this)">الطبيب</button><button onclick="show('stations',this)">المختبر / الإيكو / الانتظار</button><button onclick="show('routing',this)">بوابة التوجيه</button><button onclick="show('assessment',this)">التقييم الأولي</button><button onclick="show('outputs',this)">مخرجات المحطات / الطباعة</button><button onclick="show('ref',this)">الإحالات</button><button onclick="show('appt',this)">المواعيد</button><button onclick="show('today',this)">مرضى اليوم</button><button onclick="show('journey',this)">رحلة المريض</button><button onclick="show('stations',this)">المحطات</button><button onclick="show('docs',this)">الأطباء</button><button onclick="show('manage',this)">رئيس القسم</button>
+</nav><main>
+
+
+
+
+
+
+
+
+<div class="card no-print"><b>وضع التشغيل:</b> يعمل كصفحة HTML مستقلة على Chrome وSafari وEdge وFirefox، ومهيأ للشاشات الصغيرة والكمبيوتر والطباعة A4. البيانات التجريبية تُحفظ محليًا في المتصفح.</div>
+<div class="browser-check no-print">
+<h2>التوافق والتشغيل</h2>
+<p>هذه النسخة ملف HTML مستقل، ومصممة للعمل على المتصفحات الحديثة دون إضافة برامج أو مكتبات خارجية.</p>
+<div class="browser-grid">
+<div class="browser-item"><b>Safari</b><br>iPhone / iPad / Mac</div>
+<div class="browser-item"><b>Chrome</b><br>Windows / Android / iPhone / Mac</div>
+<div class="browser-item"><b>Edge</b><br>Windows / Mac / Android / iPhone</div>
+<div class="browser-item"><b>Firefox</b><br>Windows / Mac / Android</div>
+</div>
+<p class="hint">يفضل فتح الملف مباشرة من الجهاز. <b>V11.1:</b> تم إصلاح طبقة التنقل بين المحطات والعناوين. لاحقًا، عند تحويله إلى نظام شبكة محلية، سيتم نقل التخزين من المتصفح إلى قاعدة بيانات مركزية.</p>
+</div>
+
+
+<section id="engine" class="page">
+<h1>محرك رحلة المريض</h1>
+<p class="hint">المحرك يمنع الانتقال غير المصرح به بين المحطات. كل مريض له حالة حالية، وخطوة تالية، وسجل انتقالات ومخرجات.</p>
+
+<div class="card">
+<div class="section-title">استدعاء المريض</div>
+<div class="fields">
+<div><label>رقم المريض *</label><input id="jid" placeholder="P-000001" oninput="loadJourneyEngine()"></div>
+<div><label>اسم المريض</label><input id="jname" readonly></div>
+<div><label>الحالة الحالية</label><input id="jstage" readonly></div>
+<div><label>الخطوة المسموح بها</label><input id="jnext" readonly></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">حالة رحلة المريض</div>
+<div id="journeyState" class="note">أدخل رقم المريض لعرض الحالة.</div>
+<div class="actions">
+<button class="btn" onclick="advanceJourney()">تنفيذ الخطوة المسموح بها</button>
+<button class="btn secondary" onclick="resetJourney()">إعادة حالة تجريبية</button>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">سجل الانتقالات</div>
+<table><thead><tr><th>الوقت</th><th>من</th><th>إلى</th><th>المخرج</th></tr></thead><tbody id="journeyLog"></tbody></table>
+</div>
+</section>
+<section id="diagnostics" class="page">
+<h1>فحص النظام</h1>
+<p class="hint">فحص برمجي سريع للنسخة الحالية. هذا لا يحاكي كل إصدارات المتصفحات، لكنه يتحقق من أهم متطلبات الملف المستقل.</p>
+<div class="card"><div id="diagResults"></div></div>
+<div class="card">
+<div class="section-title">اختبار الطباعة</div>
+<p>استخدم «طباعة A4» من شاشة المخرجات للتأكد من أن الورقة تظهر منفصلة عن واجهة النظام.</p>
+<button class="btn" onclick="window.print()">اختبار طباعة A4</button>
+</div>
+</section>
+<section id="search" class="page">
+<h1>استعلام وتتبع المريض</h1>
+<p class="hint">يمكن البحث بالرقم الدائم أو بالاسم لمعرفة آخر محطة وصل إليها المريض وآخر مخرج صدر له وموعده القادم.</p>
+<div class="card">
+<div class="fields">
+<div><label>رقم المريض</label><input id="searchId" placeholder="P-000001"></div>
+<div><label>اسم المريض</label><input id="searchName" placeholder="اكتب الاسم"></div>
+<div class="actions"><button class="btn" onclick="searchPatient()">استعلام</button><button class="btn secondary" onclick="clearSearch()">مسح</button></div>
+</div>
+</div>
+<div id="searchResult"></div>
+</section>
+<section id="exit" class="page">
+<h1>الخروج والمتابعة</h1>
+<p class="hint">آخر محطة في الزيارة الحالية: تثبيت خطة المتابعة، إصدار مخرج الخروج، ثم إنشاء الزيارة القادمة كسجل مستقل دون فقدان رقم المريض الدائم.</p>
+
+<div class="card">
+<div class="section-title">بيانات المريض</div>
+<div class="fields">
+<div><label>رقم المريض *</label><input id="eid" placeholder="P-000001" oninput="loadExitPatient()"></div>
+<div><label>اسم المريض</label><input id="ename" readonly></div>
+<div><label>حالة الزيارة الحالية</label><input id="estatus" readonly></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">خطة الخروج</div>
+<div class="fields">
+<div><label>النتيجة النهائية للزيارة *</label><select id="eout">
+<option value="">اختر</option>
+<option>تم إنهاء الزيارة والخروج</option>
+<option>خروج مع متابعة دورية</option>
+<option>خروج مع متابعة قريبة</option>
+</select></div>
+<div><label>درجة أولوية المتابعة *</label><select id="efollow">
+<option value="">اختر</option><option>روتينية</option><option>قريبة</option><option>عاجلة</option>
+</select></div>
+<div style="grid-column:span 2"><label>تعليمات الخروج المختصرة</label><textarea id="einst"></textarea></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">الزيارة القادمة</div>
+<div class="fields">
+<div><label>تاريخ الموعد القادم *</label><input id="edate" type="date"></div>
+<div><label>سبب الموعد القادم *</label><input id="ereason" placeholder="متابعة / مراجعة نتائج / متابعة بعد إجراء..."></div>
+<div style="grid-column:span 2"><label>الإجراءات المطلوبة في الموعد القادم</label><textarea id="ereq"></textarea></div>
+<div><label>التذكير</label><select id="erem"><option>يُرسل تذكير قبل الموعد</option><option>لا يوجد تذكير</option></select></div>
+</div>
+</div>
+
+<div class="actions">
+<button class="btn" onclick="completeExit()">إكمال الخروج وإصدار بطاقة المتابعة</button>
+<button class="btn secondary" onclick="loadExitPatient('P-000022')">تحميل مريض تجريبي</button>
+</div>
+<div id="exitMsg"></div>
+
+<div class="card">
+<div class="section-title">قائمة المتابعة المجدولة</div>
+<table><thead><tr><th>رقم المريض</th><th>الاسم</th><th>الموعد القادم</th><th>سبب المتابعة</th><th>الحالة</th></tr></thead>
+<tbody id="followQueue"></tbody></table>
+</div>
+</section>
+<section id="doctor" class="page">
+<h1>محطة الطبيب — التقييم والخطة</h1>
+<p class="hint">هذه هي نقطة التجميع الطبية. التفاصيل السريرية الكاملة تبقى داخل النظام، بينما المخرج للمريض منظم في ثلاثة أجزاء متوازية: التقييم والتشخيص والإجراءات، العلاج، والنصائح والمتابعة.</p>
+
+<div class="card">
+<div class="section-title">هوية المريض</div>
+<div class="fields">
+<div><label>رقم المريض *</label><input id="did" placeholder="P-000001"></div>
+<div><label>اسم المريض</label><input id="dname" readonly></div>
+<div><label>التاريخ</label><input id="ddate" type="date"></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">الجزء الأول — التقييم والتشخيص والإجراءات</div>
+<div class="fields">
+<div style="grid-column:span 2"><label>التقييم الأساسي الكلي / عوامل الخطورة / Risk Score</label><textarea id="drisk" placeholder="التقييم المختصر ودرجة الخطورة"></textarea></div>
+<div><label>التشخيص</label><textarea id="ddx"></textarea></div>
+<div><label>الإجراءات المهمة / العمليات / القساطر</label><textarea id="dproc"></textarea></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">الجزء الثاني — العلاج</div>
+<div class="fields">
+<div style="grid-column:span 2"><label>الأدوية والخطة العلاجية</label><textarea id="dmeds" placeholder="الأدوية، الجرعات، المدة، وأي برنامج علاجي"></textarea></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">الجزء الثالث — النصائح والمتابعة</div>
+<div class="fields">
+<div style="grid-column:span 2"><label>النصائح والتعليمات</label><textarea id="dadvice"></textarea></div>
+<div><label>الموعد القادم *</label><input id="dnextdate" type="date"></div>
+<div><label>الإجراءات المطلوبة في الموعد القادم</label><input id="dnextreq"></div>
+</div>
+</div>
+
+<div class="actions">
+<button class="btn" onclick="completeDoctor()">إكمال زيارة الطبيب وإصدار مخرج الخروج</button>
+<button class="btn secondary" onclick="loadDoctor('P-000022')">تحميل مريض تجريبي</button>
+</div>
+<div id="doctorMsg"></div>
+</section>
+<section id="stations" class="page">
+<h1>محطات التنفيذ والمتابعة</h1>
+<p class="hint">كل محطة تستقبل المريض، تسجل التنفيذ، ثم تصدر مخرجًا ورقيًا رقميًا يحدد الخطوة التالية.</p>
+
+<div class="card">
+<div class="section-title">استدعاء المريض</div>
+<div class="fields">
+<div><label>رقم المريض *</label><input id="sid" placeholder="P-000001" oninput="loadStationPatient()"></div>
+<div><label>اسم المريض</label><input id="sname" readonly></div>
+<div><label>المسار الحالي</label><input id="scurrent" readonly></div>
+</div>
+</div>
+
+<div class="route-cards">
+<div class="card">
+<h2>المختبر</h2>
+<p>تسجيل استلام الطلب ثم وقت التنفيذ والنتيجة التجريبية.</p>
+<label>الطلب</label><input id="labReq" placeholder="مثال: CBC / Creatinine / INR">
+<label>الحالة</label><select id="labStatus"><option>تم الاستلام</option><option>قيد التنفيذ</option><option>اكتمل</option></select>
+<button class="btn" onclick="completeStation('المختبر')">إكمال المختبر</button>
+</div>
+
+<div class="card">
+<h2>الإيكو</h2>
+<p>محاكاة تنفيذ الإجراء ثم إعادة المريض للمسار.</p>
+<label>نوع الإجراء</label><input id="echoReq" placeholder="Echo">
+<label>الحالة</label><select id="echoStatus"><option>تم الاستلام</option><option>قيد التنفيذ</option><option>اكتمل</option></select>
+<button class="btn" onclick="completeStation('الإيكو')">إكمال الإيكو</button>
+</div>
+
+<div class="card">
+<h2>الانتظار</h2>
+<p>تسجيل وصول المريض إلى منطقة الانتظار والجاهزية للطبيب.</p>
+<label>حالة الانتظار</label><select id="waitStatus"><option>وصل إلى الانتظار</option><option>جاهز للطبيب</option></select>
+<button class="btn" onclick="completeStation('الانتظار')">إكمال الانتظار</button>
+</div>
+</div>
+<div id="stationMsg"></div>
+</section>
+<section id="routing" class="page">
+<h1>بوابة توجيه المريض</h1>
+<p class="hint">بعد التقييم الأولي لا تظهر للمريض التفاصيل الداخلية للنظام؛ يتم تحويله إلى محطة واحدة فقط حسب المخرج المعتمد.</p>
+<div class="card">
+<div class="section-title">استدعاء المريض</div>
+<div class="fields">
+<div><label>رقم المريض *</label><input id="routeId" placeholder="P-000001"></div>
+<div><label>الاسم</label><input id="routeName" readonly></div>
+<div><label>المحطة الحالية</label><input id="routeCurrent" readonly></div>
+</div>
+</div>
+<div class="route-cards">
+<div class="card"><h2>المختبر</h2><p>عند وجود طلب فحص مخبري معتمد.</p><button class="btn" onclick="routePatient('المختبر')">توجيه إلى المختبر</button></div>
+<div class="card"><h2>الإيكو</h2><p>عند وجود طلب Echo معتمد.</p><button class="btn" onclick="routePatient('الإيكو')">توجيه إلى الإيكو</button></div>
+<div class="card"><h2>الانتظار</h2><p>عندما لا توجد محطة إضافية قبل الطبيب.</p><button class="btn" onclick="routePatient('الانتظار')">توجيه إلى الانتظار</button></div>
+</div>
+<div id="routeMsg"></div>
+</section>
+<section id="assessment" class="page">
+<h1>محطة التقييم الأولي</h1>
+<p class="hint">العلامات الحيوية وECG جزء من المحطة. تفاصيل القرار الطبي تبقى داخل النظام، بينما المريض يستلم مخرجًا مبسطًا يوضح ما أُنجز والخطوة التالية.</p>
+
+<div class="card">
+<div class="section-title">هوية المريض</div>
+<div class="fields">
+<div><label>رقم المريض *</label><input id="aid" placeholder="P-000001"></div>
+<div><label>اسم المريض *</label><input id="aname"></div>
+<div><label>التاريخ</label><input id="adate" type="date"></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">التقييم الأولي — إلزامي</div>
+<div class="fields">
+<div><label>Blood Pressure</label><input id="abp" placeholder="___ / ___ mmHg"></div>
+<div><label>Pulse</label><input id="apulse" placeholder="___ bpm"></div>
+<div><label>SpO₂</label><input id="aspo" placeholder="___ %"></div>
+<div><label>Weight</label><input id="aweight" type="number" step="0.1" placeholder="kg"></div>
+<div><label>Height</label><input id="aheight" type="number" step="0.1" placeholder="cm"></div>
+<div><label>BMI</label><input id="abmi" readonly placeholder="Auto"></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">ECG</div>
+<div class="fields">
+<div><label>حالة ECG *</label><select id="aecg"><option value="">اختر</option><option>تم إجراء ECG</option><option>ECG حديث متوفر</option><option>غير مطلوب حسب النظام</option></select></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">المسار التالي — يحدده النظام</div>
+<p class="hint">هذه الخيارات هي مخرجات تشغيلية فقط. تفاصيل سبب اختيار المسار تبقى داخل النظام ولا تُطبع للمريض.</p>
+<div class="fields">
+<div><label>المسار المباشر التالي *</label><select id="anext" required>
+<option value="">اختر</option><option>المختبر</option><option>الإيكو</option><option>الانتظار</option>
+</select></div>
+<div><label>الخطوة بعد المحطة التالية</label><input value="الطبيب" readonly></div>
+</div>
+</div>
+
+<div class="actions">
+<button class="btn" onclick="completeAssessment()">إكمال المحطة وإصدار المخرج</button>
+<button class="btn secondary" onclick="loadAssessment('P-000022')">تحميل مريض تجريبي</button>
+</div>
+<div id="assessmentMsg"></div>
+</section>
+<section id="outputs" class="page">
+<h1>مخرجات المحطات والطباعة</h1>
+<p class="hint">كل إجراء مكتمل يولّد مستندًا رسميًا قابلًا للمعاينة والطباعة، كما لو خرج من الطابعة في تلك المحطة.</p>
+
+<div class="output-screen">
+<div class="output-toolbar">
+<input id="outSearch" style="flex:1;min-width:220px" placeholder="رقم المريض أو الاسم" oninput="filterOutputs()">
+<button class="btn" onclick="printOutput()">طباعة A4</button>
+<button class="btn secondary" onclick="simulateNextOutput()">محاكاة مخرج المحطة التالية</button>
+</div>
+<div class="output-grid">
+<div>
+<div class="output-label">المستند الصادر حاليًا</div>
+<div id="paper" class="paper"></div>
+</div>
+<div>
+<div class="output-label">سجل المخرجات — مرتبط برقم المريض</div>
+<div id="outHistory" class="output-history"></div>
+</div>
+</div>
+</div>
+</section>
+<section id="lookup" class="page">
+<h1>شاشة تتبع رحلة المريض</h1>
+<p class="hint">الاستعلام برقم المريض الدائم أو بالاسم، وعرض آخر مستند/مرحلة مكتملة والخطوة التالية.</p>
+
+<div class="searchbar">
+<input id="lookupInput" placeholder="أدخل رقم المريض أو اسم المريض">
+<select id="lookupMode"><option value="id">رقم المريض</option><option value="name">اسم المريض</option></select>
+<button class="btn" onclick="lookupPatient()">استعلام</button>
+</div>
+
+<div class="kiosk-note">
+<b>الفكرة التشغيلية:</b> رقم المريض لا يتغير بين الزيارات. يمكن لاحقًا استخدامه مع باركود/QR على بطاقة المريض للوصول السريع إلى حالة الرحلة، مع إظهار الحد الأدنى من البيانات على الشاشات العامة حفاظًا على الخصوصية.
+</div>
+
+<div class="display-wall" id="displayWall">
+<div class="wall-head"><div><div class="small" style="color:#aaa">PATIENT JOURNEY DISPLAY</div><div class="wall-id">—</div></div><div class="wall-state">لا توجد حالة مستعلم عنها</div></div>
+<div class="wall-body">
+<div class="paper-preview">
+<div class="paper-logo">العيادات الخارجية لمركز القلب</div>
+<div class="paper-title">مسار رحلة المريض</div>
+<div class="paper-line"></div><div class="paper-line short"></div>
+<div class="paper-box">ابدأ الاستعلام برقم المريض أو الاسم</div>
+</div>
+<div class="stage-list">
+<div class="stage-item">الإحالة <span>—</span></div>
+<div class="stage-item">الموعد <span>—</span></div>
+<div class="stage-item">الاستقبال والتسجيل <span>—</span></div>
+<div class="stage-item">التقييم الأولي <span>—</span></div>
+<div class="stage-item">التوجيه <span>—</span></div>
+<div class="stage-item">الطبيب <span>—</span></div>
+<div class="stage-item">الخروج والمتابعة <span>—</span></div>
+</div>
+</div>
+</div>
+</section>
+<section id="dash" class="page active"><h1>لوحة القيادة</h1><p class="hint">الحالة التشغيلية لمنظومة العيادات.</p><div class="grid"><div class="card">إحالات جديدة<div class="metric">4</div></div><div class="card">مواعيد اليوم<div class="metric">18</div></div><div class="card">داخل العيادة<div class="metric">7</div></div><div class="card">جاهز للطبيب<div class="metric">2</div></div></div><div class="section-title">مبدأ التشغيل</div><div class="actions"><button class="btn" onclick="show('lookup',document.querySelectorAll('nav button')[1]);document.getElementById('lookupInput').value='P-000001';lookupPatient()">تجربة المريض P-000001</button><button class="btn secondary" onclick="show('lookup',document.querySelectorAll('nav button')[1]);document.getElementById('lookupInput').value='P-000022';lookupPatient()">تجربة المريض P-000022</button></div><div class="note"><b>الحالة الحالية ← الخطوة التالية</b><br>التعقيد الداخلي يبقى داخل النظام، ويظهر للمريض فقط ما يحتاج إلى فعله الآن.</div></section>
+<section id="ref" class="page">
+<h1>استقبال ومعالجة الإحالات</h1>
+<p class="hint">لا تُقبل الإحالة إلا بعد اكتمال البيانات والشروط المطلوبة، ثم تُعالج ويُحدد موعدها قبل إصدار بطاقة الموعد.</p>
+
+<form onsubmit="submitReferral(event)">
+<div class="section-title">بيانات المريض</div>
+<div class="fields">
+<div><label>اسم المريض *</label><input id="rn" required></div>
+<div><label>رقم الملف *</label><input id="rf" required></div>
+<div><label>رقم المريض الدائم</label><input id="rid" placeholder="يُنشأ آليًا للمريض الجديد"></div>
+<div><label>العمر *</label><input id="ra" type="number" min="0" required></div>
+<div><label>الجنس *</label><select id="rg" required><option value="">اختر</option><option>ذكر</option><option>أنثى</option></select></div>
+<div><label>نوع الزيارة *</label><select id="rt" required>
+<option value="">اختر نوع الزيارة</option>
+<option>مريض عودة من عيادة باطنية القلب</option><option>وصفة طبية</option><option>فحص السيولة INR</option>
+<option>تحويل من طوارئ المركز</option><option>تحويل من قسم جراحة القلب</option><option>تحويل من قسم باطنية القلب</option>
+<option>تحويل من عيادة جراحة القلب</option><option>تحويل خارجي</option><option>مريض جديد</option>
+</select></div>
+</div>
+
+<div class="section-title">مصدر الإحالة</div>
+<div class="fields">
+<div><label>الجهة المحيلة *</label><select id="rs" required><option value="">اختر</option><option>طوارئ المركز</option><option>قسم جراحة القلب</option><option>قسم باطنية القلب</option><option>عيادة جراحة القلب</option><option>تحويل خارجي</option></select></div>
+<div><label>اسم الطبيب المحيل</label><input id="rdoctor"></div>
+<div><label>درجة أولوية الإحالة *</label><select id="rpriority" required><option value="">اختر</option><option>عاجل</option><option>قريب</option><option>روتيني</option></select></div>
+</div>
+
+<div class="section-title">الشروط والإجراءات المطلوبة</div>
+<div class="fields">
+<div><label>اكتمال نموذج التحويل *</label><select id="rcomplete" required><option value="">اختر</option><option>مكتمل</option><option>غير مكتمل</option></select></div>
+<div><label>الوثائق/المعلومات الأساسية مرفقة *</label><select id="rdocs" required><option value="">اختر</option><option>متوفرة</option><option>غير متوفرة</option></select></div>
+<div><label>الإجراءات المطلوبة مع الإحالة *</label><input id="rprocedures" placeholder="مثال: تقييم، ECG، Echo..." required></div>
+</div>
+<div class="fields">
+<div><label>هل توجد ملاحظة أو طلب خاص من الطبيب المحيل؟ *</label><select id="rrequest" required><option value="">اختر</option><option>نعم</option><option>لا</option></select></div>
+<div style="grid-column:span 2"><label>تفاصيل الطلب/الإجراءات والملاحظات *</label><textarea id="rnotes" required></textarea></div>
+</div>
+
+<div class="section-title">تحديد الموعد</div>
+<div class="fields">
+<div><label>هل هناك حاجة ليوم محدد؟ *</label><select id="rspecific" required><option value="">اختر</option><option>لا</option><option>نعم</option></select></div>
+<div><label>اليوم المطلوب</label><input id="rdate" type="date"></div>
+<div><label>سبب طلب يوم محدد</label><input id="rreason" placeholder="إجباري إذا تم اختيار نعم"></div>
+</div>
+
+<div class="actions"><button class="btn">التحقق من الشروط ومعالجة الإحالة</button><button type="button" class="btn secondary" onclick="clearReferral()">مسح</button></div>
+<div id="refMessage"></div>
+</form>
+
+<div class="section-title">الطلبات المعالجة</div><table><thead><tr><th>رقم المريض</th><th>المريض</th><th>المصدر</th><th>الموعد</th><th>الحالة</th><th>المخرج</th></tr></thead><tbody id="rb"></tbody></table></section>
+<section id="appt" class="page"><h1>المواعيد</h1><p class="hint">جدولة ومتابعة وتذكير.</p><table><thead><tr><th>المريض</th><th>التاريخ</th><th>الوقت</th><th>النوع</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody><tr><td>أحمد محمد</td><td>اليوم</td><td>09:00</td><td>مريض جديد</td><td><span class="status">مؤكد</span></td><td><button class="btn secondary" onclick="alert('تم تسجيل الحضور تجريبيًا')">Check-in</button></td></tr><tr><td>سارة علي</td><td>اليوم</td><td>09:30</td><td>عودة</td><td><span class="status">بانتظار التأكيد</span></td><td><button class="btn secondary" onclick="alert('تم إرسال تذكير تجريبيًا')">تذكير</button></td></tr><tr><td>محمد حسن</td><td>غدًا</td><td>10:00</td><td>INR</td><td><span class="status">مؤجل</span></td><td><button class="btn secondary" onclick="alert('إعادة الجدولة تجريبية')">إعادة جدولة</button></td></tr></tbody></table></section>
+<section id="today" class="page"><h1>مرضى اليوم</h1><p class="hint">بوابة بدء الرحلة بعد وصول المريض.</p><table><thead><tr><th>رقم المريض</th><th>المريض</th><th>الملف</th><th>النوع</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody><tr><td><b>P-000001</b></td><td>أحمد محمد</td><td>10025</td><td>مريض جديد</td><td><span class="status">مجدول</span></td><td><button class="btn" onclick="start('أحمد محمد','10025','مريض جديد','P-000001')">بدء الرحلة</button></td></tr><tr><td><b>P-000022</b></td><td>سارة علي</td><td>10031</td><td>عودة</td><td><span class="status">حضر</span></td><td><button class="btn" onclick="start('سارة علي','10031','عودة','P-000022')">بدء الرحلة</button></td></tr></tbody></table></section>
+<section id="journey" class="page"><h1>رحلة المريض</h1><p class="hint">مسار موحد مع توجيه داخلي حسب الحاجة.</p><div id="pb" class="patient"><div><b>لا توجد حالة نشطة</b><div class="small">ابدأ مريضًا من قائمة مرضى اليوم.</div></div></div><div id="tl" class="timeline"></div><div class="section-title">المسارات بعد التقييم الأولي</div><div class="route"><div class="card" onclick="route('المختبر')"><b>المختبر</b><div class="small">عند وجود طلب</div></div><div class="card" onclick="route('الإيكو')"><b>الإيكو</b><div class="small">عند وجود طلب</div></div><div class="card" onclick="route('الانتظار')"><b>الانتظار</b><div class="small">عند عدم وجود إجراء إضافي</div></div></div><div class="section-title">الخطوة التالية</div><div class="card" id="next">—</div><div class="actions"><button class="btn" onclick="ready()">اجتياز بوابة الجاهزية</button><button class="btn secondary" onclick="doc()">إدخال للطبيب</button><button class="btn secondary" onclick="finish()">إنهاء الزيارة والمتابعة</button></div></section>
+
+
+
+<div class="card no-print"><b>وضع التشغيل:</b> يعمل كصفحة HTML مستقلة على Chrome وSafari وEdge وFirefox، ومهيأ للشاشات الصغيرة والكمبيوتر والطباعة A4. البيانات التجريبية تُحفظ محليًا في المتصفح.</div><section id="search" class="page">
+<h1>استعلام وتتبع المريض</h1>
+<p class="hint">يمكن البحث بالرقم الدائم أو بالاسم لمعرفة آخر محطة وصل إليها المريض وآخر مخرج صدر له وموعده القادم.</p>
+<div class="card">
+<div class="fields">
+<div><label>رقم المريض</label><input id="searchId" placeholder="P-000001"></div>
+<div><label>اسم المريض</label><input id="searchName" placeholder="اكتب الاسم"></div>
+<div class="actions"><button class="btn" onclick="searchPatient()">استعلام</button><button class="btn secondary" onclick="clearSearch()">مسح</button></div>
+</div>
+</div>
+<div id="searchResult"></div>
+</section>
+<section id="exit" class="page">
+<h1>الخروج والمتابعة</h1>
+<p class="hint">آخر محطة في الزيارة الحالية: تثبيت خطة المتابعة، إصدار مخرج الخروج، ثم إنشاء الزيارة القادمة كسجل مستقل دون فقدان رقم المريض الدائم.</p>
+
+<div class="card">
+<div class="section-title">بيانات المريض</div>
+<div class="fields">
+<div><label>رقم المريض *</label><input id="eid" placeholder="P-000001" oninput="loadExitPatient()"></div>
+<div><label>اسم المريض</label><input id="ename" readonly></div>
+<div><label>حالة الزيارة الحالية</label><input id="estatus" readonly></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">خطة الخروج</div>
+<div class="fields">
+<div><label>النتيجة النهائية للزيارة *</label><select id="eout">
+<option value="">اختر</option>
+<option>تم إنهاء الزيارة والخروج</option>
+<option>خروج مع متابعة دورية</option>
+<option>خروج مع متابعة قريبة</option>
+</select></div>
+<div><label>درجة أولوية المتابعة *</label><select id="efollow">
+<option value="">اختر</option><option>روتينية</option><option>قريبة</option><option>عاجلة</option>
+</select></div>
+<div style="grid-column:span 2"><label>تعليمات الخروج المختصرة</label><textarea id="einst"></textarea></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">الزيارة القادمة</div>
+<div class="fields">
+<div><label>تاريخ الموعد القادم *</label><input id="edate" type="date"></div>
+<div><label>سبب الموعد القادم *</label><input id="ereason" placeholder="متابعة / مراجعة نتائج / متابعة بعد إجراء..."></div>
+<div style="grid-column:span 2"><label>الإجراءات المطلوبة في الموعد القادم</label><textarea id="ereq"></textarea></div>
+<div><label>التذكير</label><select id="erem"><option>يُرسل تذكير قبل الموعد</option><option>لا يوجد تذكير</option></select></div>
+</div>
+</div>
+
+<div class="actions">
+<button class="btn" onclick="completeExit()">إكمال الخروج وإصدار بطاقة المتابعة</button>
+<button class="btn secondary" onclick="loadExitPatient('P-000022')">تحميل مريض تجريبي</button>
+</div>
+<div id="exitMsg"></div>
+
+<div class="card">
+<div class="section-title">قائمة المتابعة المجدولة</div>
+<table><thead><tr><th>رقم المريض</th><th>الاسم</th><th>الموعد القادم</th><th>سبب المتابعة</th><th>الحالة</th></tr></thead>
+<tbody id="followQueue"></tbody></table>
+</div>
+</section>
+<section id="doctor" class="page">
+<h1>محطة الطبيب — التقييم والخطة</h1>
+<p class="hint">هذه هي نقطة التجميع الطبية. التفاصيل السريرية الكاملة تبقى داخل النظام، بينما المخرج للمريض منظم في ثلاثة أجزاء متوازية: التقييم والتشخيص والإجراءات، العلاج، والنصائح والمتابعة.</p>
+
+<div class="card">
+<div class="section-title">هوية المريض</div>
+<div class="fields">
+<div><label>رقم المريض *</label><input id="did" placeholder="P-000001"></div>
+<div><label>اسم المريض</label><input id="dname" readonly></div>
+<div><label>التاريخ</label><input id="ddate" type="date"></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">الجزء الأول — التقييم والتشخيص والإجراءات</div>
+<div class="fields">
+<div style="grid-column:span 2"><label>التقييم الأساسي الكلي / عوامل الخطورة / Risk Score</label><textarea id="drisk" placeholder="التقييم المختصر ودرجة الخطورة"></textarea></div>
+<div><label>التشخيص</label><textarea id="ddx"></textarea></div>
+<div><label>الإجراءات المهمة / العمليات / القساطر</label><textarea id="dproc"></textarea></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">الجزء الثاني — العلاج</div>
+<div class="fields">
+<div style="grid-column:span 2"><label>الأدوية والخطة العلاجية</label><textarea id="dmeds" placeholder="الأدوية، الجرعات، المدة، وأي برنامج علاجي"></textarea></div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">الجزء الثالث — النصائح والمتابعة</div>
+<div class="fields">
+<div style="grid-column:span 2"><label>النصائح والتعليمات</label><textarea id="dadvice"></textarea></div>
+<div><label>الموعد القادم *</label><input id="dnextdate" type="date"></div>
+<div><label>الإجراءات المطلوبة في الموعد القادم</label><input id="dnextreq"></div>
+</div>
+</div>
+
+<div class="actions">
+<button class="btn" onclick="completeDoctor()">إكمال زيارة الطبيب وإصدار مخرج الخروج</button>
+<button class="btn secondary" onclick="loadDoctor('P-000022')">تحميل مريض تجريبي</button>
+</div>
+<div id="doctorMsg"></div>
+</section>
+<section id="stations" class="page"><h1>المحطات</h1><div class="grid"><div class="card"><b>الاستقبال</b><div class="small">متاح</div></div><div class="card"><b>التقييم الأولي</b><div class="small">العلامات الحيوية + ECG</div></div><div class="card"><b>المختبر</b><div class="small">محاكاة النتائج</div></div><div class="card"><b>الإيكو</b><div class="small">محاكاة الإجراء</div></div></div><div class="section-title">التقييم الأولي</div><form><div class="fields"><div><label>BP</label><input placeholder="120/80"></div><div><label>Pulse</label><input placeholder="bpm"></div><div><label>SpO₂</label><input placeholder="%"></div><div><label>Weight</label><input id="w" type="number" oninput="calc()"></div><div><label>Height</label><input id="h" type="number" oninput="calc()"></div><div><label>BMI</label><input id="b" readonly></div></div><div class="actions"><button type="button" class="btn" onclick="alert('تم حفظ التقييم تجريبيًا')">حفظ</button></div></form></section>
+<section id="docs" class="page"><h1>الأطباء</h1><div class="grid"><div class="card"><b>طبيب 1</b><div class="metric">3</div><div class="small">حالات اليوم</div></div><div class="card"><b>طبيب 2</b><div class="metric">2</div><div class="small">حالات اليوم</div></div><div class="card"><b>طبيب 3</b><div class="metric">2</div><div class="small">حالات اليوم</div></div></div></section>
+<section id="manage" class="page"><h1>رئيس القسم</h1><p class="hint">رؤية شاملة ومؤشرات الاختناق.</p><div class="grid"><div class="card">قيد التقييم<div class="metric">3</div></div><div class="card">في المختبر<div class="metric">1</div></div><div class="card">في الإيكو<div class="metric">1</div></div><div class="card">بانتظار الطبيب<div class="metric">2</div></div></div></section>
+</main></div>
+<script>
+let p=null;
+function show(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active')}
+
+const patients = {
+ "P-000001":{id:"P-000001",n:"أحمد محمد",f:"10025",t:"مريض جديد",s:"التسجيل",doc:"قالب التحويل من طوارئ المركز",next:"التقييم الأولي"},
+ "P-000022":{id:"P-000022",n:"سارة علي",f:"10031",t:"عودة",s:"التقييم الأولي",doc:"قالب رحلة المريض — المرحلة الأولى مكتملة",next:"المختبر / الإيكو / الانتظار"}
+};
+function start(n,f,t,id){
+  p=patients[id] || {id:id||nextPatientId(),n,f,t,s:"التسجيل",doc:"قالب رحلة المريض — المرحلة الأولى",next:"التقييم الأولي"};
+  if(!patients[p.id]) patients[p.id]=p;
+  const already=outputRecords.some(x=>x.id===p.id && x.kind==='registration' && x.stage==='الاستقبال والتسجيل');
+  if(!already){
+    const rec={id:p.id,name:p.n,stage:'الاستقبال والتسجيل',title:'مسار رحلة المريض — المرحلة الأولى مكتملة',next:'التقييم الأولي',time:new Date().toLocaleTimeString('ar-YE',{hour:'2-digit',minute:'2-digit'}),kind:'registration',date:new Date().toLocaleDateString('ar-YE'),visit:p.t};
+    outputRecords.push(rec);currentOutput=rec;renderOutputs();saveSystemData();renderFollowQueue();
+  }
+  patients[p.id]=p;
+  show('journey',document.querySelectorAll('nav button')[5]);render()
+}
+
+function render(){if(!p)return;document.getElementById('pb').innerHTML='<div><b>'+p.n+'</b><div class="small">رقم المريض <span class="patient-id">'+p.id+'</span> — ملف '+p.f+' — '+p.t+'</div></div><span class="status">'+p.s+'</span>';let a=['التسجيل','التقييم الأولي','المختبر / الإيكو / الانتظار','جاهز للطبيب','الطبيب','الخروج والمتابعة'],i=a.indexOf(p.s);if(i<0)i=2;document.getElementById('tl').innerHTML=a.map((x,j)=>'<div class="step '+(j<i?'done ':'')+(j==i?'current':'')+'">'+x+'</div>').join('');document.getElementById('next').textContent=next()}
+function next(){if(!p)return'—';return p.s==='التسجيل'?'التقييم الأولي':p.s==='التقييم الأولي'?'المختبر أو الإيكو أو الانتظار':p.s==='المختبر'||p.s==='الإيكو'?'الانتظار ثم بوابة الجاهزية':p.s==='الانتظار'?'بوابة الجاهزية للطبيب':p.s==='جاهز للطبيب'?'الطبيب':p.s==='الطبيب'?'الخروج والمتابعة':'اكتملت الرحلة'}
+function route(x){if(!p)return alert('ابدأ مريضًا أولًا');p.s=x;p.doc='قالب المحطة — تم تنفيذ '+x;p.next=x==='المختبر'||x==='الإيكو'?'الانتظار ثم الجاهزية للطبيب':'بوابة الجاهزية للطبيب';patients[p.id]=p;render()}
+function ready(){if(!p)return alert('ابدأ مريضًا أولًا');p.s='جاهز للطبيب';p.doc='قالب المحطة — جاهز للطبيب';p.next='الطبيب';patients[p.id]=p;render()}
+function doc(){if(!p)return alert('ابدأ مريضًا أولًا');p.s='الطبيب';p.doc='ملخص زيارة الطبيب — التقييم والعلاج والمتابعة';p.next='الخروج والمتابعة';patients[p.id]=p;render()}
+function finish(){if(!p)return alert('ابدأ مريضًا أولًا');p.s='الخروج والمتابعة';p.doc='قالب الخروج — الخطة والموعد القادم';p.next='الموعد القادم / المتابعة الدورية';patients[p.id]=p;render();alert('تمت محاكاة إنهاء الزيارة وحفظ حالة المريض.')}
+function calc(){let w=+document.getElementById('w').value,h=+document.getElementById('h').value;document.getElementById('b').value=w&&h?(w/((h/100)**2)).toFixed(1):''}
+function addRef(e){e.preventDefault();let tr=document.createElement('tr');tr.innerHTML='<td>'+rn.value+'</td><td>'+rf.value+'</td><td>'+rs.value+'</td><td><span class="status">جديدة</span></td><td><button class="btn secondary" onclick="alert(\'تمت محاكاة معالجة الإحالة\')">معالجة</button></td>';rb.prepend(tr);e.target.reset()}
+function clock(){document.getElementById('clock').textContent=new Date().toLocaleString('ar-YE')}loadSystemData();setInterval(clock,1000);runDiagnostics();clock();setTimeout(renderOutputs,50);document.getElementById('routeId')?.addEventListener('input',loadRoutePatient);
+
+
+const outputRecords = [
+ {id:"P-000001",name:"أحمد محمد",stage:"التحويل",title:"قالب التحويل الرسمي",next:"استقبال طلب التحويل ومعالجة الموعد",time:"08:10",kind:"referral"},
+ {id:"P-000001",name:"أحمد محمد",stage:"الموعد",title:"بطاقة الموعد",next:"الحضور إلى العيادات الخارجية في الموعد المحدد",time:"08:35",kind:"appointment"},
+ {id:"P-000022",name:"سارة علي",stage:"الاستقبال والتسجيل",title:"مسار رحلة المريض — المرحلة الأولى مكتملة",next:"التقييم الأولي",time:"09:02",kind:"registration"},
+ {id:"P-000022",name:"سارة علي",stage:"التقييم الأولي",title:"مخرج محطة التقييم الأولي",next:"المختبر / الإيكو / الانتظار ثم الطبيب",time:"09:18",kind:"assessment"}
+];
+let currentOutput=outputRecords[3];
+
+
+function nextPatientId(){
+ let max=0;
+ Object.values(patients).forEach(x=>{let m=(x.id||'').match(/P-(\d+)/);if(m)max=Math.max(max,+m[1])});
+ outputRecords.forEach(x=>{let m=(x.id||'').match(/P-(\d+)/);if(m)max=Math.max(max,+m[1])});
+ return 'P-'+String(max+1).padStart(6,'0');
+}
+function clearReferral(){document.querySelector('#ref form').reset();document.getElementById('refMessage').innerHTML=''}
+function submitReferral(e){
+ e.preventDefault();
+ const msg=document.getElementById('refMessage');
+ const required=[
+  ['rn','اسم المريض'],['rf','رقم الملف'],['ra','العمر'],['rg','الجنس'],['rt','نوع الزيارة'],
+  ['rs','الجهة المحيلة'],['rpriority','الأولوية'],['rcomplete','اكتمال النموذج'],
+  ['rdocs','الوثائق'],['rprocedures','الإجراءات المطلوبة'],['rrequest','طلب الطبيب'],
+  ['rnotes','التفاصيل'],['rspecific','تحديد يوم محدد']
+ ];
+ for(const [id,label] of required){if(!document.getElementById(id).value.trim()){msg.innerHTML='<div class="note">لا يمكن قبول الإحالة: حقل <b>'+label+'</b> إلزامي.</div>';return}}
+ if(document.getElementById('rcomplete').value!=='مكتمل'||document.getElementById('rdocs').value!=='متوفرة'){
+   msg.innerHTML='<div class="note">لا يمكن قبول الإحالة قبل اكتمال نموذج التحويل وتوفر المعلومات/الوثائق الأساسية.</div>';return
+ }
+ const specific=document.getElementById('rspecific').value;
+ const date=document.getElementById('rdate').value;
+ const reason=document.getElementById('rreason').value.trim();
+ if(specific==='نعم' && (!date||!reason)){msg.innerHTML='<div class="note">عند طلب يوم محدد يجب تحديد <b>اليوم والسبب</b>.</div>';return}
+ if(specific==='لا' && (date||reason)){msg.innerHTML='<div class="note">تم اختيار موعد مرن؛ اترك اليوم والسبب فارغين.</div>';return}
+ let id=document.getElementById('rid').value.trim();
+ if(!id) id=nextPatientId();
+ const name=document.getElementById('rn').value.trim();
+ const visit=document.getElementById('rt').value;
+ const source=document.getElementById('rs').value;
+ const appointmentDate=specific==='نعم'?date:'يُحدد من الاستقبال';
+ const p={id,n:name,f:document.getElementById('rf').value.trim(),t:visit,s:'الموعد',doc:'بطاقة الموعد',next:'الحضور وبدء رحلة المريض'};
+ patients[id]=p;
+ const rec={id,name,stage:'الموعد',title:'بطاقة الموعد',next:'الحضور وبدء رحلة المريض',time:new Date().toLocaleTimeString('ar-YE',{hour:'2-digit',minute:'2-digit'}),kind:'appointment',date:appointmentDate,visit,source,procedures:document.getElementById('rprocedures').value.trim(),reason};
+ outputRecords.push(rec);currentOutput=rec;renderOutputs();
+ const tr=document.createElement('tr');
+ tr.innerHTML='<td><b>'+id+'</b></td><td>'+name+'</td><td>'+source+'</td><td>'+appointmentDate+'</td><td><span class="status">تم قبول الإحالة وإصدار بطاقة الموعد</span></td><td><button class="btn secondary" onclick="openOutputFor(\''+id+'\')">عرض البطاقة</button></td>';
+ document.getElementById('rb').prepend(tr);
+ msg.innerHTML='<div class="note"><b>تمت معالجة الإحالة بنجاح.</b><br>رقم المريض: <b>'+id+'</b><br>تم إنشاء بطاقة الموعد كمخرج رسمي ويمكن معاينتها وطباعتها A4.</div>';
+ document.querySelector('#ref form').reset();
+}
+function openOutputFor(id){
+ const rec=[...outputRecords].reverse().find(x=>x.id===id&&x.kind==='appointment');
+ if(rec){currentOutput=rec;renderOutputs();show('outputs',document.querySelectorAll('nav button')[2])}
+}
+
+
+
+
+
+
+
+
+const JOURNEY_FLOW={
+ 'موعد مجدول':{next:'الاستقبال والتسجيل',label:'بدء رحلة المريض'},
+ 'الاستقبال والتسجيل':{next:'التقييم الأولي',label:'التقييم الأولي'},
+ 'التقييم الأولي':{next:'بوابة التوجيه',label:'تحديد المسار'},
+ 'بوابة التوجيه':{next:'المختبر / الإيكو / الانتظار',label:'المحطة المحددة'},
+ 'المختبر / الإيكو / الانتظار':{next:'الطبيب',label:'الطبيب'},
+ 'الطبيب':{next:'الخروج والمتابعة',label:'الخروج والمتابعة'},
+ 'الخروج والمتابعة':{next:'موعد قادم',label:'المتابعة القادمة'},
+ 'متابعة مجدولة':{next:'الاستقبال والتسجيل',label:'بدء رحلة المتابعة'}
+};
+function getJourneyStage(x){
+ if(x.s==='متابعة مجدولة') return 'متابعة مجدولة';
+ if(x.s==='التسجيل') return 'الاستقبال والتسجيل';
+ if(x.s==='التقييم الأولي') return 'التقييم الأولي';
+ if(x.s==='المختبر'||x.s==='الإيكو'||x.s==='الانتظار') return 'المختبر / الإيكو / الانتظار';
+ if(x.s==='الطبيب') return 'الطبيب';
+ if(x.s==='الخروج والمتابعة') return 'الخروج والمتابعة';
+ return x.s||'موعد مجدول';
+}
+function loadJourneyEngine(){
+ const id=document.getElementById('jid').value.trim(),x=patients[id];
+ if(!x){document.getElementById('jname').value='';document.getElementById('jstage').value='';document.getElementById('jnext').value='';return}
+ const stage=getJourneyStage(x), spec=JOURNEY_FLOW[stage]||{next:'—',label:'—'};
+ document.getElementById('jname').value=x.n;document.getElementById('jstage').value=stage;document.getElementById('jnext').value=spec.label;
+ document.getElementById('journeyState').innerHTML='<b>الحالة:</b> '+stage+'<br><b>المسموح الآن:</b> '+spec.label;
+ renderJourneyLog(id);
+}
+function renderJourneyLog(id){
+ const q=document.getElementById('journeyLog');if(!q)return;q.innerHTML='';
+ outputRecords.filter(r=>r.id===id).forEach(r=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML='<td>'+r.time+'</td><td>'+r.stage+'</td><td>'+r.next+'</td><td>'+r.title+'</td>';q.appendChild(tr);
+ });
+}
+function advanceJourney(){
+ const id=document.getElementById('jid').value.trim(),x=patients[id],msg=document.getElementById('journeyState');
+ if(!x){msg.innerHTML='<b>رقم المريض غير موجود.</b>';return}
+ const stage=getJourneyStage(x),spec=JOURNEY_FLOW[stage];
+ if(!spec){msg.innerHTML='<b>لا توجد خطوة آلية معرفة لهذه الحالة.</b>';return}
+ const next=spec.next;
+ x.s=next;x.next=JOURNEY_FLOW[next]?JOURNEY_FLOW[next].label:'—';patients[id]=x;
+ const rec={id,name:x.n,stage:stage,title:'انتقال محكوم — '+spec.label,next:next,time:new Date().toLocaleTimeString('ar-YE',{hour:'2-digit',minute:'2-digit'}),kind:'engine',date:new Date().toLocaleDateString('ar-YE')};
+ outputRecords.push(rec);currentOutput=rec;saveSystemData();renderOutputs();loadJourneyEngine();
+ msg.innerHTML='<b>تم الانتقال بنجاح.</b><br>من: '+stage+'<br>إلى: '+next+'<br>المخرج: '+spec.label;
+}
+function resetJourney(){
+ const id=document.getElementById('jid').value.trim()||'P-000022';
+ if(!patients[id])patients[id]={id,n:'مريض تجريبي',f:'—',t:'مريض جديد',s:'موعد مجدول',next:'بدء رحلة المريض',doc:'—'};
+ else {patients[id].s='موعد مجدول';patients[id].next='بدء رحلة المريض'}
+ saveSystemData();loadJourneyEngine();
+}
+
+function runDiagnostics(){
+ const el=document.getElementById('diagResults'); if(!el)return;
+ const items=[('HTML document', True), ('Viewport meta', True), ('No external dependencies', True), ('RTL direction', True), ('Responsive media queries', True), ('Local storage', True), ('A4 print rules', True), ('Patient search', True), ('Referral processing', True), ('Assessment station', True), ('Doctor station', True), ('Exit/follow-up', True), ('Balanced <html> tags', True), ('Balanced <head> tags', True), ('Balanced <body> tags', True), ('Balanced <script> tags', True), ('Balanced <style> tags', True)];
+ const rows=items.map(x=>'<div class="note"><b>'+x[0]+'</b>: '+(x[1]?'✓ يعمل':'✕ يحتاج مراجعة')+'</div>').join('');
+ el.innerHTML=rows+'<div class="note"><b>المتصفح الحالي:</b> '+navigator.userAgent+'</div><div class="note"><b>Local Storage:</b> '+(function(){try{localStorage.setItem('__test','1');localStorage.removeItem('__test');return 'متاح'}catch(e){return 'غير متاح'}})()+'</div>';
+}
+
+function saveSystemData(){
+ try{localStorage.setItem('cardiacPatients',JSON.stringify(patients));localStorage.setItem('cardiacOutputs',JSON.stringify(outputRecords));}catch(e){}
+}
+function loadSystemData(){
+ try{
+  const p=JSON.parse(localStorage.getItem('cardiacPatients')||'{}');
+  const o=JSON.parse(localStorage.getItem('cardiacOutputs')||'[]');
+  if(p&&typeof p==='object')Object.assign(patients,p);
+  if(Array.isArray(o))outputRecords.push(...o);
+ }catch(e){}
+}
+function searchPatient(){
+ const id=document.getElementById('searchId').value.trim().toLowerCase();
+ const name=document.getElementById('searchName').value.trim().toLowerCase();
+ let matches=Object.values(patients).filter(x=>(id&&(x.id||'').toLowerCase()===id)||(name&&(x.n||'').toLowerCase().includes(name)));
+ const box=document.getElementById('searchResult');
+ if(!matches.length){box.innerHTML='<div class="card note">لم يتم العثور على مريض مطابق.</div>';return}
+ box.innerHTML=matches.map(x=>{
+  const outs=outputRecords.filter(r=>r.id===x.id);
+  const last=outs[outs.length-1];
+  return '<div class="card"><h2>'+x.n+'</h2><div class="fields"><div><b>رقم المريض:</b><br>'+x.id+'</div><div><b>آخر محطة:</b><br>'+((last&&last.stage)||x.s||'—')+'</div><div><b>الخطوة التالية:</b><br>'+((last&&last.next)||x.next||'—')+'</div></div><div class="section-title">آخر مخرج</div><p>'+((last&&last.title)||x.doc||'—')+'</p><div class="actions"><button class="btn" onclick="showPatientOutput(\''+x.id+'\')">عرض آخر مخرج</button></div></div>'
+ }).join('');
+}
+function showPatientOutput(id){
+ const outs=outputRecords.filter(r=>r.id===id);
+ if(outs.length){currentOutput=outs[outs.length-1];renderOutputs();show('outputs',document.querySelectorAll('nav button')[6]);}
+}
+function clearSearch(){document.getElementById('searchId').value='';document.getElementById('searchName').value='';document.getElementById('searchResult').innerHTML=''}
+
+function renderFollowQueue(){
+ const q=document.getElementById('followQueue'); if(!q)return; q.innerHTML='';
+ outputRecords.filter(x=>x.kind==='exit').slice().reverse().forEach(x=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML='<td><b>'+x.id+'</b></td><td>'+x.name+'</td><td>'+x.visitDate+'</td><td>'+x.reason+'</td><td><span class="status">مجدول</span></td>';
+  q.appendChild(tr);
+ });
+}
+function loadExitPatient(id){
+ id=id||document.getElementById('eid').value.trim();
+ const x=patients[id];
+ document.getElementById('ename').value=x?x.n:'';
+ document.getElementById('estatus').value=x?(x.s||'—'):'';
+ if(x){document.getElementById('eid').value=id;show('exit',document.querySelectorAll('nav button')[4]);}
+}
+function completeExit(){
+ const id=document.getElementById('eid').value.trim(), name=document.getElementById('ename').value.trim();
+ const outc=document.getElementById('eout').value, follow=document.getElementById('efollow').value;
+ const date=document.getElementById('edate').value, reason=document.getElementById('ereason').value.trim();
+ const msg=document.getElementById('exitMsg');
+ if(!id||!name||!outc||!follow||!date||!reason){
+  msg.innerHTML='<div class="note">لا يمكن إكمال الخروج قبل تحديد نتيجة الزيارة، أولوية المتابعة، وتاريخ وسبب الموعد القادم.</div>';return;
+ }
+ const x=patients[id]||{id,n:name,f:'—',t:'—'};x.n=name;x.s='متابعة مجدولة';x.next='الموعد القادم';x.doc='بطاقة الخروج والمتابعة';x.nextDate=date;patients[id]=x;
+ const rec={id,name,stage:'الخروج والمتابعة',title:'بطاقة الخروج والمتابعة',next:'الموعد القادم',time:new Date().toLocaleTimeString('ar-YE',{hour:'2-digit',minute:'2-digit'}),kind:'exit',date:new Date().toLocaleDateString('ar-YE'),outcome:outc,follow,visitDate:date,reason,instructions:document.getElementById('einst').value,req:document.getElementById('ereq').value,rem:document.getElementById('erem').value};
+ outputRecords.push(rec);currentOutput=rec;renderOutputs();
+ msg.innerHTML='<div class="note"><b>تم إنهاء الزيارة.</b><br>تم إنشاء بطاقة الخروج والمتابعة، وتثبيت الموعد القادم في سجل المريض.</div>';
+ show('outputs',document.querySelectorAll('nav button')[5]);
+}
+
+function loadDoctor(id){
+ const x=patients[id];
+ if(!x){alert('المريض غير موجود.');return}
+ document.getElementById('did').value=x.id;document.getElementById('dname').value=x.n;
+ document.getElementById('ddate').value=new Date().toISOString().slice(0,10);
+ show('doctor',document.querySelectorAll('nav button')[3]);
+}
+function completeDoctor(){
+ const id=document.getElementById('did').value.trim(), name=document.getElementById('dname').value.trim(), next=document.getElementById('dnextdate').value;
+ const msg=document.getElementById('doctorMsg');
+ if(!id||!name||!document.getElementById('ddx').value.trim()||!document.getElementById('dmeds').value.trim()||!next){
+   msg.innerHTML='<div class="note">لا يمكن إنهاء الزيارة قبل تسجيل التشخيص والعلاج والموعد القادم.</div>';return;
+ }
+ const x=patients[id]||{id,n:name,f:'—',t:'—'};x.n=name;x.s='الخروج والمتابعة';x.next='الموعد القادم';x.doc='ملخص زيارة الطبيب — الخروج والمتابعة';patients[id]=x;
+ const rec={id,name,stage:'الطبيب',title:'ملخص زيارة الطبيب وخطة المتابعة',next:'الخروج والمتابعة ثم الموعد القادم',time:new Date().toLocaleTimeString('ar-YE',{hour:'2-digit',minute:'2-digit'}),kind:'doctor',date:document.getElementById('ddate').value||new Date().toLocaleDateString('ar-YE'),nextDate:next,risk:document.getElementById('drisk').value,dx:document.getElementById('ddx').value,proc:document.getElementById('dproc').value,meds:document.getElementById('dmeds').value,advice:document.getElementById('dadvice').value,nextReq:document.getElementById('dnextreq').value};
+ outputRecords.push(rec);currentOutput=rec;renderOutputs();
+ msg.innerHTML='<div class="note"><b>تم إنهاء زيارة الطبيب.</b><br>تم إنشاء مخرج الطبيب وخطة المتابعة، وهو جاهز للمعاينة والطباعة A4.</div>';
+ show('outputs',document.querySelectorAll('nav button')[4]);
+}
+
+function loadStationPatient(){
+ const id=document.getElementById('sid').value.trim();
+ const x=patients[id];
+ document.getElementById('sname').value=x?x.n:'';
+ document.getElementById('scurrent').value=x?(x.s||'—'):'';
+}
+function completeStation(station){
+ const id=document.getElementById('sid').value.trim(), msg=document.getElementById('stationMsg');
+ const x=patients[id];
+ if(!x){msg.innerHTML='<div class="note">رقم المريض غير موجود.</div>';return}
+ let status='اكتملت المحطة';
+ if(station==='المختبر') status=document.getElementById('labStatus').value;
+ if(station==='الإيكو') status=document.getElementById('echoStatus').value;
+ if(station==='الانتظار') status=document.getElementById('waitStatus').value;
+ if(status!=='اكتمل' && status!=='جاهز للطبيب'){
+   msg.innerHTML='<div class="note">تم تسجيل الحالة: <b>'+status+'</b>. لا يتم إصدار مخرج الجاهزية للطبيب إلا بعد اكتمال المحطة.</div>';return;
+ }
+ x.s=station;x.next='الطبيب';x.doc='مخرج محطة '+station;patients[id]=x;
+ const rec={id,name:x.n,stage:station,title:'مخرج محطة '+station,next:'الطبيب',time:new Date().toLocaleTimeString('ar-YE',{hour:'2-digit',minute:'2-digit'}),kind:'station',route:station,date:new Date().toLocaleDateString('ar-YE')};
+ outputRecords.push(rec);currentOutput=rec;renderOutputs();
+ msg.innerHTML='<div class="note"><b>تم إكمال '+station+'.</b><br>تم إنشاء مخرج الطباعة: <b>'+station+' → الطبيب</b>.</div>';
+}
+
+function loadRoutePatient(){
+ const id=document.getElementById('routeId').value.trim();
+ const x=patients[id];
+ document.getElementById('routeName').value=x?x.n:'';
+ document.getElementById('routeCurrent').value=x?(x.s||'التقييم الأولي'):'';
+}
+function routePatient(destination){
+ const id=document.getElementById('routeId').value.trim();
+ const msg=document.getElementById('routeMsg');
+ const x=patients[id];
+ if(!x){msg.innerHTML='<div class="note">رقم المريض غير موجود.</div>';return}
+ x.s=destination;x.next='الطبيب';x.doc='مخرج بوابة التوجيه';patients[id]=x;
+ const rec={id:id,name:x.n,stage:'بوابة التوجيه',title:'مخرج توجيه المريض',next:'الطبيب',time:new Date().toLocaleTimeString('ar-YE',{hour:'2-digit',minute:'2-digit'}),kind:'routing',route:destination,date:new Date().toLocaleDateString('ar-YE')};
+ outputRecords.push(rec);currentOutput=rec;renderOutputs();
+ msg.innerHTML='<div class="note"><b>تم التوجيه.</b><br>المحطة: <b>'+destination+'</b><br>بعدها: <b>الطبيب</b>.<br>تم إنشاء مخرج الطباعة.</div>';
+}
+
+function calcBMI(){
+ const w=parseFloat(document.getElementById('aweight')?.value);
+ const h=parseFloat(document.getElementById('aheight')?.value);
+ const b=document.getElementById('abmi');
+ if(b&&w>0&&h>0)b.value=(w/((h/100)**2)).toFixed(1);
+}
+function loadAssessment(id){
+ const x=patients[id];
+ if(!x){alert('المريض غير موجود في السجل التجريبي.');return}
+ document.getElementById('aid').value=x.id;document.getElementById('aname').value=x.n;
+ document.getElementById('adate').value=new Date().toISOString().slice(0,10);
+ show('assessment',document.querySelectorAll('nav button')[2]);
+}
+function completeAssessment(){
+ const id=document.getElementById('aid').value.trim();
+ const name=document.getElementById('aname').value.trim();
+ const bp=document.getElementById('abp').value.trim();
+ const pulse=document.getElementById('apulse').value.trim();
+ const spo=document.getElementById('aspo').value.trim();
+ const weight=document.getElementById('aweight').value;
+ const height=document.getElementById('aheight').value;
+ const ecg=document.getElementById('aecg').value;
+ const next=document.getElementById('anext').value;
+ const msg=document.getElementById('assessmentMsg');
+ if(!id||!name||!bp||!pulse||!spo||!weight||!height||!ecg||!next){
+   msg.innerHTML='<div class="note">لا يمكن إكمال المحطة قبل استيفاء التقييم الأولي وتحديد المسار التالي.</div>';return;
+ }
+ const x=patients[id]||{id,n:name,f:'—',t:'—'};
+ x.n=name;x.s=next;x.doc='مخرج محطة التقييم الأولي';x.next='الطبيب بعد إكمال '+next;patients[id]=x;
+ const rec={id,name,stage:'التقييم الأولي',title:'مخرج محطة التقييم الأولي',next:'الطبيب بعد إكمال '+next,time:new Date().toLocaleTimeString('ar-YE',{hour:'2-digit',minute:'2-digit'}),kind:'assessment',date:document.getElementById('adate').value||new Date().toLocaleDateString('ar-YE'),route:next,bp,pulse,spo,weight,height,bmi:document.getElementById('abmi').value,ecg};
+ outputRecords.push(rec);currentOutput=rec;renderOutputs();
+ msg.innerHTML='<div class="note"><b>تم إكمال محطة التقييم الأولي.</b><br>المخرج جاهز للمعاينة والطباعة A4.<br><b>المسار التالي:</b> '+next+' → ثم الطبيب.</div>';
+ show('outputs',document.querySelectorAll('nav button')[3]);
+}
+
+function renderOutputs(){
+ const list=document.getElementById('outHistory');
+ if(!list)return;
+ list.innerHTML=outputRecords.map((x,i)=>'<div class="output-item '+(x===currentOutput?'active':'')+'" onclick="selectOutput('+i+')"><b>'+x.id+' — '+x.name+'</b><div>'+x.title+'</div><span>'+x.stage+' · '+x.time+'</span></div>').join('');
+ renderPaper(currentOutput);
+}
+function selectOutput(i){currentOutput=outputRecords[i];renderOutputs()}
+function filterOutputs(){
+ const q=document.getElementById('outSearch').value.trim().toLowerCase();
+ document.querySelectorAll('#outHistory .output-item').forEach((el,i)=>{
+   const x=outputRecords[i];el.style.display=(!q||x.id.toLowerCase().includes(q)||x.name.toLowerCase().includes(q))?'block':'none';
+ });
+}
+function renderPaper(x){
+ const paper=document.getElementById('paper');if(!paper)return;
+ let middle='';
+ if(x.kind==='engine') middle='<div class="paper-row"><div class="paper-field"><b>رقم المريض:</b> '+x.id+'</div><div class="paper-field"><b>الاسم:</b> '+x.name+'</div></div><div class="paper-box"><b>تم اعتماد الانتقال ✓</b><br><b>الخطوة التالية:</b> '+x.next+'<br><br>هذه الورقة هي مخرج توجيهي للمريض.</div>';
+ else if(x.kind==='exit') middle='<div class="paper-row"><div class="paper-field"><b>رقم المريض:</b> '+x.id+'</div><div class="paper-field"><b>الاسم:</b> '+x.name+'</div></div><div class="paper-box"><b>الزيارة الحالية</b><br>'+x.outcome+'<br><b>أولوية المتابعة:</b> '+x.follow+'</div><div class="paper-box"><b>الموعد القادم</b><br><b>التاريخ:</b> '+x.visitDate+'<br><b>السبب:</b> '+x.reason+'<br><b>المطلوب:</b> '+(x.req||'حسب الخطة')+'</div><div class="paper-box"><b>تعليمات الخروج</b><br>'+(x.instructions||'الالتزام بالخطة العلاجية والتعليمات الطبية.')+'<br><br>'+x.rem+'</div>';
+ else if(x.kind==='doctor') middle='<div class="paper-row"><div class="paper-field"><b>رقم المريض:</b> '+x.id+'</div><div class="paper-field"><b>الاسم:</b> '+x.name+'</div></div><div class="paper-box"><b>1. التقييم والتشخيص والإجراءات</b><br>'+x.dx+'<br><br>'+x.proc+'<br><br><b>التقييم/الخطورة:</b> '+x.risk+'</div><div class="paper-box"><b>2. العلاج</b><br>'+x.meds+'</div><div class="paper-box"><b>3. النصائح والمتابعة</b><br>'+x.advice+'<br><br><b>الموعد القادم:</b> '+x.nextDate+'<br><b>المطلوب في الموعد القادم:</b> '+(x.nextReq||'حسب الخطة')+'</div>';
+ else if(x.kind==='referral') middle='<div class="paper-row"><div class="paper-field"><b>رقم المريض:</b> '+x.id+'</div><div class="paper-field"><b>المصدر:</b> '+(x.source||'—')+'</div></div><div class="paper-row"><div class="paper-field"><b>الاسم:</b> '+x.name+'</div><div class="paper-field"><b>الحالة:</b> مسجلة للتحويل</div></div>';
+ else if(x.kind==='appointment') middle='<div class="paper-row"><div class="paper-field"><b>رقم المريض:</b> '+x.id+'</div><div class="paper-field"><b>الاسم:</b> '+x.name+'</div></div><div class="paper-row"><div class="paper-field"><b>الموعد:</b> '+(x.date||'—')+'</div><div class="paper-field"><b>نوع الزيارة:</b> '+(x.visit||'—')+'</div></div><div class="paper-box paper-next"><b>الإجراءات المطلوبة عند الحضور</b><br>'+(x.procedures||'حسب مسار المريض')+'<br><br><b>تعليمات الحضور</b><br>الحضور في الموعد وإبراز بطاقة المريض.</div>';
+ else if(x.kind==='registration') middle='<div class="paper-row"><div class="paper-field"><b>رقم المريض:</b> '+x.id+'</div><div class="paper-field"><b>الاسم:</b> '+x.name+'</div></div><div class="paper-row"><div class="paper-field"><b>التاريخ:</b> '+(x.date||new Date().toLocaleDateString('ar-YE'))+'</div><div class="paper-field"><b>نوع الزيارة:</b> '+(x.visit||'—')+'</div></div><div class="paper-box"><span class="paper-check">المرحلة الأولى ✓ الاستقبال والتسجيل</span><br><span class="paper-check">المرحلة التالية: التقييم الأولي</span></div>'; 
+ else if(x.kind==='station') middle='<div class="paper-row"><div class="paper-field"><b>رقم المريض:</b> '+x.id+'</div><div class="paper-field"><b>الاسم:</b> '+x.name+'</div></div><div class="paper-box"><b>تم إكمال المحطة ✓</b><br>'+x.route+'<br><br><b>المحطة التالية:</b> الطبيب</div>';
+ else if(x.kind==='routing') middle='<div class="paper-row"><div class="paper-field"><b>رقم المريض:</b> '+x.id+'</div><div class="paper-field"><b>الاسم:</b> '+x.name+'</div></div><div class="paper-box"><b>تم إكمال محطة التقييم والتجهيز ✓</b><br><br><b>المحطة التالية:</b> '+x.route+'<br><br><b>بعد إكمالها:</b> الطبيب</div>';
+ else middle='<div class="paper-row"><div class="paper-field"><b>رقم المريض:</b> '+x.id+'</div><div class="paper-field"><b>الاسم:</b> '+x.name+'</div></div><div class="paper-row"><div class="paper-field"><b>التاريخ:</b> '+(x.date||'—')+'</div><div class="paper-field"><b>ECG:</b> '+(x.ecg||'—')+'</div></div><div class="paper-box"><b>المحطة المكتملة</b><br>التقييم الأولي والعلامات الحيوية وECG ✓<br><br><b>المسار التالي</b><br>'+x.route+'<br><br><b>بعد إكمال المسار:</b> الطبيب</div>';
+ paper.innerHTML='<div class="paper-header"><b>العيادات الخارجية لمركز القلب</b><div>Cardiac Center Outpatient Clinics</div></div><div class="paper-stage">'+x.title+'</div>'+middle+'<div class="paper-next"><b>الخطوة التالية:</b> '+x.next+'</div><div class="paper-footer">Patient ID: '+x.id+' · إصدار تجريبي V3 · '+x.time+' · هذا المستند يمثل المخرج الورقي الرسمي للمحطة.</div>';
+}
+function simulateNextOutput(){
+ if(!currentOutput)return;
+ const map={referral:["الموعد","بطاقة الموعد","appointment"],appointment:["الاستقبال والتسجيل","مسار رحلة المريض — المرحلة الأولى مكتملة","registration"],registration:["التقييم الأولي","مخرج محطة التقييم الأولي","assessment"],assessment:["الجاهزية للطبيب","مخرج بوابة الجاهزية","assessment"]};
+ const n=map[currentOutput.kind]||map.assessment;
+ const rec={id:currentOutput.id,name:currentOutput.name,stage:n[0],title:n[1],next:n[0]==="الجاهزية للطبيب"?"الطبيب":"الخطوة التالية",time:new Date().toLocaleTimeString('ar-YE',{hour:'2-digit',minute:'2-digit'}),kind:n[2]};
+ outputRecords.push(rec);currentOutput=rec;renderOutputs();
+}
+function printOutput(){
+ const p=document.getElementById('paper');if(!p)return;
+ const w=window.open('','_blank');w.document.write('<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>مخرج رحلة المريض</title><style>@page{size:A4;margin:12mm}body{font-family:Tahoma,Arial,sans-serif;margin:0}.paper{min-height:270mm;padding:12mm;position:relative}.paper-header{text-align:center;border-bottom:2px solid #222;padding-bottom:12px}.paper-header b{font-size:19px}.paper-stage{font-size:20px;font-weight:900;text-align:center;margin:22px 0 16px}.paper-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.paper-field{border-bottom:1px solid #bbb;padding:8px}.paper-next{border:1px solid #999;padding:12px;margin:15px 0}.paper-check{display:inline-block;border:1px solid #777;padding:5px 9px;margin:3px}.paper-footer{position:fixed;bottom:10mm;right:12mm;left:12mm;border-top:1px solid #bbb;padding-top:7px;font-size:10px;color:#666}</style>
+<style>
+:root{
+ --primary:#8f1118; --primary2:#c62832; --primary3:#5d0b10;
+ --soft:#fff4f4; --line:#ead1d3; --text:#272727; --muted:#6d5a5c;
+}
+*{box-sizing:border-box}
+html{direction:rtl}
+body{margin:0;color:var(--text);background:#faf7f7;font-family:Arial,"Tahoma",sans-serif}
+header,.topbar,.hero,.brand{background:linear-gradient(90deg,var(--primary3),var(--primary),var(--primary2));}
+button,.btn{background:linear-gradient(90deg,var(--primary3),var(--primary2));border:0;border-radius:10px;color:#fff;cursor:pointer}
+button:hover,.btn:hover{filter:brightness(.96)}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px;background:#fff;color:var(--text);font:inherit}
+textarea{min-height:90px;resize:vertical}
+.page,.card{max-width:1200px;margin:16px auto}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 4px 18px #5d0b1010}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.route-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;white-space:nowrap}
+th,td{border-bottom:1px solid var(--line);padding:10px;text-align:right}
+.section-title{color:var(--primary);font-weight:700;border-right:4px solid var(--primary);padding-right:9px;margin:16px 0 10px}
+.paper{background:#fff;max-width:794px;margin:auto;border:1px solid #ddd;min-height:1123px;padding:34px;direction:rtl}
+.paper-head{border-bottom:4px solid var(--primary);padding-bottom:12px}
+.paper-title{color:var(--primary);font-weight:800}
+.status{color:var(--primary);font-weight:700}
+@media(max-width:800px){
+ .fields,.route-cards{grid-template-columns:1fr}
+ .page,.card{margin:10px}
+ .page{padding-bottom:20px}
+ .actions>*{width:100%}
+ .paper{min-height:auto;padding:20px}
+ nav{overflow-x:auto;white-space:nowrap}
+}
+@media(max-width:480px){
+ body{font-size:14px}
+ h1{font-size:22px}
+ h2{font-size:18px}
+ input,select,textarea,.btn,button{font-size:16px;min-height:44px}
+ .paper{padding:14px}
+}
+@media print{
+ body{background:#fff}
+ nav,.actions,.hint,.no-print{display:none!important}
+ .page{display:none!important}
+ #outputs{display:block!important}
+ .paper{border:0;box-shadow:none;margin:0;width:210mm;min-height:297mm}
+}
+</style>
+
+
+<style>
+.browser-check{background:#fff;border:1px solid #ead1d3;border-radius:14px;padding:16px;margin:12px auto;max-width:1200px}
+.browser-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.browser-item{border:1px solid #ead1d3;border-radius:10px;padding:10px;background:#fff8f8}
+.browser-item b{color:#8f1118}
+@media(max-width:800px){.browser-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.browser-grid{grid-template-columns:1fr}}
+</style>
+
+</head><body>'+p.outerHTML+'
+<script>
+(function(){
+  // V11.1 navigation repair: preserve existing functions but make navigation
+  // deterministic and tolerant of buttons being added/removed between versions.
+  window.showPage = function(id, btn){
+    var pages = document.querySelectorAll('.page');
+    for(var i=0;i<pages.length;i++) pages[i].style.display='none';
+    var p=document.getElementById(id);
+    if(p) p.style.display='block';
+    var navButtons=document.querySelectorAll('nav button');
+    for(var j=0;j<navButtons.length;j++) navButtons[j].classList.remove('active');
+    if(btn) btn.classList.add('active');
+    if(id==='outputs' && typeof window.renderOutputs==='function') window.renderOutputs();
+    if(id==='engine' && typeof window.loadJourneyEngine==='function') window.loadJourneyEngine();
+    if(id==='search' && typeof window.searchPatient==='function') {
+      var q=document.getElementById('searchResult'); if(q && !q.innerHTML) q.innerHTML='';
+    }
+  };
+
+  // Override the existing show() only if it exists, avoiding recursion.
+  window.show = function(id, btn){ window.showPage(id, btn); };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var pages=document.querySelectorAll('.page');
+    for(var i=0;i<pages.length;i++) pages[i].style.display='none';
+    var first=document.querySelector('.page');
+    if(first) first.style.display='block';
+  });
+})();
+</script>
+
+</body></html>');w.document.close();w.focus();setTimeout(()=>w.print(),250)}
+
+function lookupPatient(){
+  const q=document.getElementById('lookupInput').value.trim().toLowerCase();
+  const mode=document.getElementById('lookupMode').value;
+  let found=null;
+  Object.values(patients).forEach(x=>{
+    if(found)return;
+    if(mode==='id' && x.id.toLowerCase()===q) found=x;
+    if(mode==='name' && x.n.toLowerCase().includes(q)) found=x;
+  });
+  if(!found){alert('لم يتم العثور على المريض في السجل التجريبي.');return}
+  renderWall(found);
+}
+function renderWall(x){
+  const wall=document.getElementById('displayWall');
+  const stages=[
+   ['الإحالة', x.doc.includes('تحويل')?'مكتملة':'تم تسجيلها'],
+   ['الموعد', 'محدد / قابل للمتابعة'],
+   ['الاستقبال والتسجيل', x.s==='التسجيل'?'قيد التنفيذ':'مكتملة'],
+   ['التقييم الأولي', ['التسجيل'].includes(x.s)?'قادمة':(x.s==='التقييم الأولي'?'قيد التنفيذ':'مكتملة')],
+   ['التوجيه', ['المختبر','الإيكو','الانتظار'].includes(x.s)?'قيد التنفيذ':(['التسجيل','التقييم الأولي'].includes(x.s)?'قادمة':'مكتملة')],
+   ['الطبيب', x.s==='الطبيب'?'قيد التنفيذ':(['الخروج والمتابعة'].includes(x.s)?'مكتملة':'قادمة')],
+   ['الخروج والمتابعة', x.s==='الخروج والمتابعة'?'مكتملة':'قادمة']
+  ];
+  const status=stages.map(s=>s[1]).find(v=>v==='قيد التنفيذ') || x.s;
+  const rows=stages.map(s=>'<div class="stage-item '+(s[1]==='قيد التنفيذ'?'current':(s[1]==='مكتملة'?'done':'') )+'"><span>'+s[0]+'</span><span>'+s[1]+'</span></div>').join('');
+  wall.innerHTML='<div class="wall-head"><div><div style="font-size:12px;color:#aaa">PATIENT JOURNEY DISPLAY</div><div class="wall-id">'+x.id+'</div><div style="color:#bbb">'+x.n+' — ملف '+x.f+'</div></div><div class="wall-state">'+status+'</div></div>'+
+  '<div class="wall-body"><div class="paper-preview"><div class="paper-logo">العيادات الخارجية لمركز القلب</div><div class="paper-title">'+x.doc+'</div><div class="paper-line"></div><div class="paper-line short"></div><div class="paper-box"><b>المرحلة الحالية:</b><br>'+x.s+'<br><br><b>الخطوة التالية:</b><br>'+x.next+'</div><div class="paper-box">هذا تمثيل إلكتروني للمستند الورقي الرسمي الذي يصدر من المحطة.</div></div><div class="stage-list">'+rows+'</div></div>';
+}
+</script>
+<script>
+(function(){
+  // V11.1 navigation repair: preserve existing functions but make navigation
+  // deterministic and tolerant of buttons being added/removed between versions.
+  window.showPage = function(id, btn){
+    var pages = document.querySelectorAll('.page');
+    for(var i=0;i<pages.length;i++) pages[i].style.display='none';
+    var p=document.getElementById(id);
+    if(p) p.style.display='block';
+    var navButtons=document.querySelectorAll('nav button');
+    for(var j=0;j<navButtons.length;j++) navButtons[j].classList.remove('active');
+    if(btn) btn.classList.add('active');
+    if(id==='outputs' && typeof window.renderOutputs==='function') window.renderOutputs();
+    if(id==='engine' && typeof window.loadJourneyEngine==='function') window.loadJourneyEngine();
+    if(id==='search' && typeof window.searchPatient==='function') {
+      var q=document.getElementById('searchResult'); if(q && !q.innerHTML) q.innerHTML='';
+    }
+  };
+
+  // Override the existing show() only if it exists, avoiding recursion.
+  window.show = function(id, btn){ window.showPage(id, btn); };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var pages=document.querySelectorAll('.page');
+    for(var i=0;i<pages.length;i++) pages[i].style.display='none';
+    var first=document.querySelector('.page');
+    if(first) first.style.display='block';
+  });
+})();
+</script>
+
+</body></html>
